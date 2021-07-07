@@ -1,8 +1,8 @@
-package com.azat_sabirov.myweather
+package com.azat_sabirov.myweather.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.azat_sabirov.myweather.ui.main.MainFragment
+import com.azat_sabirov.myweather.R
 
 class MainActivity : AppCompatActivity() {
 
