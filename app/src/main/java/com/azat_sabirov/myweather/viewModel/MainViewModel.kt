@@ -7,23 +7,25 @@ import com.azat_sabirov.myweather.model.RepositoryImpl
 import java.lang.Thread.sleep
 
 class MainViewModel(
-    private val liveDataToObserve: MutableLiveData<AppState> = MutableLiveData(),
-    private val repositoryImpl: Repository = RepositoryImpl()
+   private val liveDataToObserve: MutableLiveData<AppState> = MutableLiveData(),
+   private val repositoryImpl: Repository = RepositoryImpl()
 ) :
-    ViewModel() {
+   ViewModel() {
 
-    fun getLiveData() = liveDataToObserve
+   fun getLiveData() = liveDataToObserve
 
-    fun getWeatherFromLocalSource() = getDataFromLocalSource()
+   fun getWeatherFromLocalSourceRus() = getDataFromLocalSource(isRussian = true)
 
-    fun getWeatherFromRemoteSource() = getDataFromLocalSource()
+   fun getWeatherFromLocalSourceWorld() = getDataFromLocalSource(isRussian = false)
 
-    private fun getDataFromLocalSource() {
-        liveDataToObserve.value = AppState.Loading
-        Thread {
-            sleep(1000)
-            liveDataToObserve.postValue(AppState.Success(repositoryImpl.getWeatherFromLocalStorage()))
-        }.start()
-    }
+   fun getWeatherFromRemoteSource() = getDataFromLocalSource(isRussian = true)
+
+   private fun getDataFromLocalSource(isRussian: Boolean) {
+       liveDataToObserve.value = AppState.Loading
+       Thread {
+           sleep(1000)
+           liveDataToObserve.postValue(AppState.Success(if (isRussian) repositoryImpl.getWeatherFromLocalStorageRus() else repositoryImpl.getWeatherFromLocalStorageWorld()))
+       }.start()
+   }
 }
 
