@@ -13,81 +13,84 @@ import com.azat_sabirov.myweather.databinding.FragmentMainBinding
 import com.azat_sabirov.myweather.viewModel.AppState
 import com.azat_sabirov.myweather.viewModel.MainViewModel
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.fragment_main.*
 
 class MainFragment : Fragment() {
 
-   private var _binding: FragmentMainBinding? = null
-   private val binding get() = _binding!!
+    private var _binding: FragmentMainBinding? = null
+    private val binding get() = _binding!!
 
-   private lateinit var viewModel: MainViewModel
-   private val adapter = MainFragmentAdapter(object : OnItemViewClickListener {
-       override fun onItemViewClick(weather: Weather) {
-           val manager = activity?.supportFragmentManager
-           if (manager != null) {
-               val bundle = Bundle()
-               bundle.putParcelable(DetailsFragment.BUNDLE_EXTRA, weather)
-               manager.beginTransaction()
-                   .add(R.id.container, DetailsFragment.newInstance(bundle))
-                   .addToBackStack("")
-                   .commitAllowingStateLoss()
-           }
-       }
-   })
-   private var isDataSetRus: Boolean = true
+    private val viewModel: MainViewModel by lazy { ViewModelProvider(this).get(MainViewModel::class.java) }
 
-   override fun onCreateView(
-       inflater: LayoutInflater, container: ViewGroup?,
-       savedInstanceState: Bundle?
-   ): View {
-       _binding = FragmentMainBinding.inflate(inflater, container, false)
-       return binding.getRoot()
-   }
+    private var isDataSetRus: Boolean = true
+    private val adapter = MainFragmentAdapter(object : OnItemViewClickListener {
+        override fun onItemViewClick(weather: Weather) {
+            activity?.supportFragmentManager?.apply {
+                beginTransaction()
+                    .add(R.id.container, DetailsFragment.newInstance(Bundle().apply {
+                        putParcelable(DetailsFragment.BUNDLE_EXTRA, weather)
+                    }))
+                    .addToBackStack("")
+                    .commitAllowingStateLoss()
+            }
+        }
+    })
 
-   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-       super.onViewCreated(view, savedInstanceState)
-       binding.mainFragmentRecyclerView.adapter = adapter
-       binding.mainFragmentFAB.setOnClickListener { changeWeatherDataSet() }
-       viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-       viewModel.getLiveData().observe(viewLifecycleOwner, Observer { renderData(it) })
-       viewModel.getWeatherFromLocalSourceRus()
-   }
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentMainBinding.inflate(inflater, container, false)
+        return binding.getRoot()
+    }
 
-   private fun changeWeatherDataSet() {
-       if (isDataSetRus) {
-           viewModel.getWeatherFromLocalSourceWorld()
-           binding.mainFragmentFAB.setImageResource(R.drawable.ic_earth)
-       } else {
-           viewModel.getWeatherFromLocalSourceRus()
-           binding.mainFragmentFAB.setImageResource(R.drawable.ic_russia)
-       }
-       isDataSetRus = !isDataSetRus
-   }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.mainFragmentRecyclerView.adapter = adapter
+        binding.mainFragmentFAB.setOnClickListener { changeWeatherDataSet() }
+//        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModel.getLiveData().observe(viewLifecycleOwner, Observer { renderData(it) })
+        viewModel.getWeatherFromLocalSourceRus()
+    }
 
-   private fun renderData(appState: AppState) {
-       when (appState) {
-           is AppState.Success -> {
-               binding.mainFragmentLoadingLayout.visibility = View.GONE
-               adapter.setWeather(appState.weatherData)
-           }
-           is AppState.Loading -> {
-               binding.mainFragmentLoadingLayout.visibility = View.VISIBLE
-           }
-           is AppState.Error -> {
-               binding.mainFragmentLoadingLayout.visibility = View.GONE
-               Snackbar
-                   .make(binding.mainFragmentFAB, getString(R.string.error), Snackbar.LENGTH_INDEFINITE)
-                   .setAction(getString(R.string.reload)) { viewModel.getWeatherFromLocalSourceRus() }
-                   .show()
-           }
-       }
-   }
+    private fun changeWeatherDataSet() =
+        if (isDataSetRus) {
+            viewModel.getWeatherFromLocalSourceWorld()
+            mainFragmentFAB.setImageResource(R.drawable.ic_earth)
+        } else {
+            viewModel.getWeatherFromLocalSourceRus()
+            mainFragmentFAB.setImageResource(R.drawable.ic_russia)
+        }.also { isDataSetRus = !isDataSetRus }
 
-   interface OnItemViewClickListener {
-       fun onItemViewClick(weather: Weather)
-   }
+    private fun renderData(appState: AppState) {
+        when (appState) {
+            is AppState.Success -> {
+                binding.mainFragmentLoadingLayout.visibility = View.GONE
+                adapter.setWeather(appState.weatherData)
+            }
+            is AppState.Loading -> {
+                binding.mainFragmentLoadingLayout.visibility = View.VISIBLE
+            }
+            is AppState.Error -> {
+                binding.mainFragmentLoadingLayout.visibility = View.GONE
+                Snackbar
+                    .make(
+                        binding.mainFragmentFAB,
+                        getString(R.string.error),
+                        Snackbar.LENGTH_INDEFINITE
+                    )
+                    .setAction(getString(R.string.reload)) { viewModel.getWeatherFromLocalSourceRus() }
+                    .show()
+            }
+        }
+    }
 
-   companion object {
-       fun newInstance() =
-           MainFragment()
-   }
+    interface OnItemViewClickListener {
+        fun onItemViewClick(weather: Weather)
+    }
+
+    companion object {
+        fun newInstance() =
+            MainFragment()
+    }
 }
