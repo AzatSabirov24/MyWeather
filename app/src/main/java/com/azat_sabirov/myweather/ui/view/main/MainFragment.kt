@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -40,7 +39,6 @@ class MainFragment : Fragment() {
         }
     })
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -53,7 +51,7 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.mainFragmentRecyclerView.adapter = adapter
         binding.mainFragmentFAB.setOnClickListener { changeWeatherDataSet() }
-        viewModel.getLiveData().observe(viewLifecycleOwner, Observer { renderData(it) })
+        viewModel.getLiveData().observe(viewLifecycleOwner, { renderData(it) })
         viewModel.getWeatherFromLocalSourceRus()
     }
 
@@ -69,7 +67,7 @@ class MainFragment : Fragment() {
 
     private fun renderData(appState: AppState) {
         when (appState) {
-            is AppState.Succes -> {
+            is AppState.Success -> {
                 binding.mainFragmentLoadingLayout.visibility = View.GONE
                 adapter.setWeather(appState.weatherData)
             }

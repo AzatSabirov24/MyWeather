@@ -5,7 +5,6 @@ import android.os.Handler
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.azat_sabirov.myweather.BuildConfig
-import com.azat_sabirov.myweather.model.City
 import com.google.gson.Gson
 import com.azat_sabirov.myweather.model.WeatherDTO
 import java.io.BufferedReader

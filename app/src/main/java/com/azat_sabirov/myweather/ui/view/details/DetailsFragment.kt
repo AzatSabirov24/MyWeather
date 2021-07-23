@@ -17,7 +17,7 @@ class DetailsFragment : Fragment() {
 
     private var _binding: FragmentDetailsBinding? = null
     private val binding get() = _binding!!
-    lateinit var weatherBundle: Weather
+    private lateinit var weatherBundle: Weather
 
     private val onLoadListener: WeatherLoader.WeatherLoaderListener =
         object : WeatherLoader.WeatherLoaderListener {
