@@ -1,5 +1,7 @@
 package com.azat_sabirov.myweather.ui.view.main
 
+import android.content.Intent
+import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.azat_sabirov.myweather.R
@@ -8,6 +10,7 @@ import com.azat_sabirov.myweather.databinding.MainActivityBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: MainActivityBinding
+    private val receiver = MainBroadcastReceiver()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,5 +21,11 @@ class MainActivity : AppCompatActivity() {
                 .replace(R.id.container, MainFragment.newInstance())
                 .commit()
         }
+        registerReceiver(receiver, IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED))
+    }
+
+    override fun onDestroy() {
+        unregisterReceiver(receiver)
+        super.onDestroy()
     }
 }
