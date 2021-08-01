@@ -1,4 +1,6 @@
-package com.azat_sabirov.myweather.model
+package com.azat_sabirov.myweather.repository
+
+import com.azat_sabirov.myweather.model.Weather
 
 interface Repository {
     fun getWeatherFromServer(): Weather

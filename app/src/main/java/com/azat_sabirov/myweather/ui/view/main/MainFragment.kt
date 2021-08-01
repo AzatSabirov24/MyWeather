@@ -12,6 +12,7 @@ import com.azat_sabirov.myweather.R
 import com.azat_sabirov.myweather.databinding.FragmentMainBinding
 import com.azat_sabirov.myweather.model.Weather
 import com.azat_sabirov.myweather.ui.view.details.DetailsFragment
+import com.azat_sabirov.myweather.utils.showSnackBar
 import com.azat_sabirov.myweather.viewmodel.AppState
 import com.azat_sabirov.myweather.viewmodel.MainViewModel
 
@@ -38,6 +39,7 @@ class MainFragment : Fragment() {
             }
         }
     })
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -76,7 +78,7 @@ class MainFragment : Fragment() {
             }
             is AppState.Error -> {
                 mainFragmentLoadingLayout.visibility = View.GONE
-                mainFragmentRootView.createAndShow(
+                mainFragmentRootView.showSnackBar(
                     getString(R.string.error),
                     getString(R.string.reload),
                     { viewModel.getWeatherFromLocalSourceRus() })
@@ -84,17 +86,19 @@ class MainFragment : Fragment() {
         }
     }
 
+    override fun onDestroy() {
+        adapter.removeListener()
+        super.onDestroy()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     companion object {
         fun newInstance() =
             MainFragment()
     }
-}
 
-fun View.createAndShow(
-    text: String,
-    actionText: String,
-    action: (View) -> Unit,
-    length: Int = Snackbar.LENGTH_INDEFINITE
-) {
-    Snackbar.make(this, text, length).setAction(actionText, action).show()
 }

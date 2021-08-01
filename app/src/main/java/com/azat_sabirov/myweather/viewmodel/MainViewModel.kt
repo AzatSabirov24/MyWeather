@@ -2,8 +2,8 @@ package com.azat_sabirov.myweather.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.azat_sabirov.myweather.model.Repository
-import com.azat_sabirov.myweather.model.RepositoryImpl
+import com.azat_sabirov.myweather.repository.Repository
+import com.azat_sabirov.myweather.repository.RepositoryImpl
 import java.lang.Thread.sleep
 
 class MainViewModel(
@@ -14,10 +14,11 @@ class MainViewModel(
 
     fun getLiveData() = liveDataToObserve
 
-    fun getWeatherFromLocalSourceRus() = getDataFromLocalSource(isRussian = true)
-    fun getWeatherFromLocalSourceWorld() = getDataFromLocalSource(isRussian = false)
+    fun getWeatherFromLocalSourceRus() = getDataFromLocalSourse(isRussian = true)
+    fun getWeatherFromLocalSourceWorld() = getDataFromLocalSourse(isRussian = false)
+    fun getWeatherFromRemoteSource() = getDataFromLocalSourse(isRussian = true)
 
-    private fun getDataFromLocalSource(isRussian: Boolean) {
+    private fun getDataFromLocalSourse(isRussian: Boolean) {
         liveDataToObserve.value = AppState.Loading
         Thread {
             sleep(1000)

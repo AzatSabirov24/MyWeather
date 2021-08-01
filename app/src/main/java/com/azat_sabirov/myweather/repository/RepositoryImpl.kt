@@ -1,4 +1,7 @@
-package com.azat_sabirov.myweather.model
+package com.azat_sabirov.myweather.repository
+
+import com.azat_sabirov.myweather.model.City
+import com.azat_sabirov.myweather.model.Weather
 
 class RepositoryImpl : Repository {
 
