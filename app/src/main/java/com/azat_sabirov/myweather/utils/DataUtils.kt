@@ -1,11 +1,20 @@
 package com.azat_sabirov.myweather.utils
 
-import com.azat_sabirov.myweather.model.FactDTO
-import com.azat_sabirov.myweather.model.Weather
-import com.azat_sabirov.myweather.model.WeatherDTO
-import com.azat_sabirov.myweather.model.getDefaultCity
+import com.azat_sabirov.myweather.history.HistoryEntity
+import com.azat_sabirov.myweather.model.*
 
 fun convertDtoToModel(weatherDTO: WeatherDTO): List<Weather> {
-   val fact: FactDTO = weatherDTO.fact!!
-   return listOf(Weather(getDefaultCity(), fact.temp!!, fact.feels_like!!, fact.condition!!, fact.icon))
+    val fact: FactDTO = weatherDTO.fact!!
+    return listOf(Weather(getDefaultCity(), fact.temp!!,
+        fact.feels_like!!, fact.condition!!, fact.icon))
+}
+
+fun convertHistoryEntityToWeather(entityList: List<HistoryEntity>): List<Weather> {
+    return entityList.map {
+        Weather(City(it.city, 0.0, 0.0), it.temperature, 0, it.condition)
+    }
+}
+
+fun convertWeatherToEntity(weather: Weather): HistoryEntity {
+    return HistoryEntity(0, weather.city.city, weather.temperature, weather.condition)
 }

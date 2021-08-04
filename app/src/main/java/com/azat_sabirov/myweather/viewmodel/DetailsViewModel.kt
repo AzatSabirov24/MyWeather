@@ -2,6 +2,8 @@ package com.azat_sabirov.myweather.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.azat_sabirov.myweather.app.App.Companion.getHistoryDao
+import com.azat_sabirov.myweather.model.Weather
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -15,13 +17,17 @@ private const val CORRUPTED_DATA = "Неполные данные"
 
 class DetailsViewModel(
    val detailsLiveData: MutableLiveData<AppState> = MutableLiveData(),
-   private val detailsRepositoryImpl: DetailsRepository = DetailsRepositoryImpl(RemoteDataSource())
+   private val detailsRepository: DetailsRepository = DetailsRepositoryImpl(RemoteDataSource()),
+   private val historyRepository: LocalRepository = LocalRepositoryImpl(getHistoryDao())
 ) : ViewModel() {
-
 
    fun getWeatherFromRemoteSource(lat: Double, lon: Double) {
        detailsLiveData.value = AppState.Loading
-       detailsRepositoryImpl.getWeatherDetailsFromServer(lat, lon, callBack)
+       detailsRepository.getWeatherDetailsFromServer(lat, lon, callBack)
+   }
+
+   fun saveCityToDB(weather: Weather) {
+       historyRepository.saveEntity(weather)
    }
 
    private val callBack = object :
@@ -52,6 +58,8 @@ class DetailsViewModel(
        }
    }
 }
+
+
 
 
 

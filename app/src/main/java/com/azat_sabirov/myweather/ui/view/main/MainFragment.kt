@@ -16,10 +16,13 @@ import com.azat_sabirov.myweather.utils.showSnackBar
 import com.azat_sabirov.myweather.viewmodel.AppState
 import com.azat_sabirov.myweather.viewmodel.MainViewModel
 
+private const val IS_WORLD_KEY = "LIST_OF_TOWNS_KEY"
+
 class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
+
 
     private val viewModel: MainViewModel by lazy {
         ViewModelProvider(this).get(MainViewModel::class.java)

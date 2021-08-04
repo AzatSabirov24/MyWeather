@@ -1,35 +1,23 @@
 package com.azat_sabirov.myweather.ui.view.details
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import coil.api.load
-import com.azat_sabirov.myweather.BuildConfig
 import com.azat_sabirov.myweather.R
 import com.azat_sabirov.myweather.databinding.FragmentDetailsBinding
-import com.azat_sabirov.myweather.model.FactDTO
+import com.azat_sabirov.myweather.model.City
 import com.azat_sabirov.myweather.model.Weather
-import com.azat_sabirov.myweather.model.WeatherDTO
 import com.azat_sabirov.myweather.utils.showSnackBar
 import com.azat_sabirov.myweather.viewmodel.AppState
 import com.azat_sabirov.myweather.viewmodel.DetailsViewModel
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
-import com.google.gson.Gson
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_details.*
 import okhttp3.*
-import java.io.IOException
 
 const val DETAILS_INTENT_FILTER = "DETAILS INTENT FILTER"
 const val DETAILS_LOAD_RESULT_EXTRA = "LOAD RESULT"
@@ -104,6 +92,7 @@ class DetailsFragment : Fragment() {
     private fun setWeather(weather: Weather) {
         with(binding) {
             val city = weatherBundle.city
+            saveCity(city, weather)
             cityName.text = city.city
             cityCoordinates.text = String.format(
                 getString(R.string.city_coordinates),
@@ -129,6 +118,20 @@ class DetailsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun saveCity(
+        city: City,
+        weather: Weather
+    ) {
+        viewModel.saveCityToDB(
+            Weather(
+                city,
+                weather.temperature,
+                weather.feelsLike,
+                weather.condition
+            )
+        )
     }
 
 
